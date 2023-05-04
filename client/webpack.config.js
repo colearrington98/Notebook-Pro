@@ -1,8 +1,7 @@
-
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const WebpackPwaManifest = require('webpack-pwa-manifest');
-const path = require('path');
 const { InjectManifest } = require('workbox-webpack-plugin');
+const path = require('path');
 
 module.exports = () => {
   return {
@@ -17,35 +16,33 @@ module.exports = () => {
     },
     plugins: [
       new HtmlWebpackPlugin({
-        template: './src/index.html',
+        template: './index.html',
         title: 'Text Editor',
       }),
-      new WebpackPwaManifest({
-        name: 'Progressive Web Application',
-        short_name: 'PWA',
-        description: 'A simple progressive web application!',
-        background_color: '#ffffff',
-        crossorigin: 'use-credentials', //can be null, use-credentials or anonymous
-        icons: [
-          {
-            src: path.resolve('src/assets/icon.png'),
-            sizes: [96, 128, 192, 256, 384, 512] // multiple sizes
-          },
-          {
-            src: path.resolve('src/assets/large-icon.png'),
-            size: '1024x1024' // you can also use the specifications pattern
-          },
-          {
-            src: path.resolve('src/assets/maskable-icon.png'),
-            size: '1024x1024',
-            purpose: 'maskable'
-          }
-        ]
-      }),
+     
       new InjectManifest({
         swSrc: './src-sw.js',
-        swDest: 'service-worker.js',
-      })
+        swDest: 'sw.js',
+      }),
+
+      new WebpackPwaManifest({
+        fingerprints: false,
+        inject: true,
+        name: 'Text Editor',
+        short_name: 'Text Editor',
+        description: 'A simple text editor',
+        background_color: '#ffffff',
+        theme_color: '#000000',
+        start_url: './',
+        publicPath: './',
+        icons: [
+          {
+            src: path.resolve('src/images/icon.png'),
+            sizes: [96, 128, 192, 256, 384, 512],
+            destination: path.join('assets', 'icons'),
+          },
+        ],
+      }),
     ],
     module: {
       rules: [
@@ -55,12 +52,13 @@ module.exports = () => {
         },
 
         {
-          test: /\.js$/,
+          test: /\.m?js$/,
           exclude: /node_modules/,
           use: {
             loader: 'babel-loader',
             options: {
-              presets : ['@babel/preset-env']
+              presets: ['@babel/preset-env'],
+              plugins: ['@babel/plugin-proposal-object-rest-spread', '@babel/transform-runtime'],
             }
           }
         }
