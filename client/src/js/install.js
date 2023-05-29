@@ -8,7 +8,7 @@ window.addEventListener('beforeinstallprompt', (event) => {
     window.deferredPrompt = event;
 
     //Remove the hidden attribute from the install button
-    butInstall.removeAttribute('hidden', false);
+    butInstall.classList.toggle('hidden', false);
 
 });
 
